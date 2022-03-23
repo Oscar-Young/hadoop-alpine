@@ -3,7 +3,7 @@ Alpine 3.15 ( 建議 3.12 以上 )
 Hadoop 3.3.2
 ## 事前準備
 
-依照 (Alpine 官方文件)[https://wiki.alpinelinux.org/wiki/Docker]安裝 Docker 
+依照 [Alpine 官方文件](https://wiki.alpinelinux.org/wiki/Docker) 安裝 Docker 
 
 ``` sh
 $ apk add docker
