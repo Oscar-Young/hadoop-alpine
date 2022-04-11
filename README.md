@@ -1,6 +1,6 @@
 ## 操作環境
 
-- Alpine 3.15 ( 建議 3.12 以上 )
+- Alpine 3.15
 - Hadoop 3.3.2
 
 ## 事前準備
@@ -19,22 +19,11 @@ Docker version 20.10.11, build dea9396e184290f638ea873c76db7c80efd5a1d2
 
 ## 準備編譯環境
 
-使用 Docker 建立 `alpine 3.13` Container
+使用 Docker 建立 `alpine 3.15` Container
 
 ```sh
-$ docker run -itd --name hdp alpine:3.13
+$ docker run -itd --name hdp alpine:3.15
 $ docker exec -it hdp ash
-```
-
-
-更換 Alpine package repositories source
-
-```sh
-$ cat << EOF | tee /etc/apk/repositories > /dev/null 
-http://dl-cdn.alpinelinux.org/alpine/v3.13/main
-http://dl-cdn.alpinelinux.org/alpine/v3.13/community
-http://dl-cdn.alpinelinux.org/alpine/v3.12/main
-EOF
 ```
 
 安裝 Compile 所需使用到的套件
@@ -149,22 +138,6 @@ warning redirecting incorrect #include <sys/poll.h> to <poll.h>
 解決方法:
 ```
 $ sed -ri 's/^#warning.*//' /usr/include/sys/poll.h
-```
-
----
-
-錯誤訊息:
-
-```
-if defined(__sun) || defined(__GLIBC_PREREQ) && __GLIBC_PREREQ(2, 32)
-MT-Safe under Solaris which doesn't support sys_errlist/sys_nerr
-```
-
-解決方法:
-
-```
-$ sed -ir 's/^#if defined\(__sun\).*/#if 1/' /tmp/hadoop-3.3.2-src/hadoop-common-project/hadoop-common/src/main/native/src/exception.c
-$ sed -ri '211s/.*/\/\/assert(expr, file, line);/' /tmp/hadoop-3.3.2-src/hadoop-hdfs-project/hadoop-hdfs-native-client/src/main/native/libhdfspp/third_party/tr2/optional.hpp
 ```
 
 ---
@@ -292,4 +265,207 @@ org.apache.maven.lifecycle.LifecycleExecutionException: Failed to execute goal o
 ```
 $ apk add bash
 ```
+---
 
+錯誤訊息:
+
+```
+[ERROR] Failed to execute goal org.apache.hadoop:hadoop-maven-plugins:3.3.2:cmake-compile (cmake-compile) on project hadoop-common: Error executing CMake: Cannot run program "cmake" (in directory "/workspace/hadoop-3.3.2-src/hadoop-common-project/hadoop-common/target/native"): error=2, No such file or directory -> [Help 1]
+org.apache.maven.lifecycle.LifecycleExecutionException: Failed to execute goal org.apache.hadoop:hadoop-maven-plugins:3.3.2:cmake-compile (cmake-compile) on project hadoop-common: Error executing CMake
+```
+
+解決方法:
+```
+apk add cmake
+```
+---
+
+錯誤訊息:
+
+```
+[WARNING] CMake Warning (dev) in CMakeLists.txt:
+[WARNING]   No project() command is present.  The top-level CMakeLists.txt file must
+[WARNING]   contain a literal, direct call to the project() command.  Add a line of
+[WARNING]   code such as
+[WARNING]
+[WARNING]     project(ProjectName)
+[WARNING]
+[WARNING]   near the top of the file, but after cmake_minimum_required().
+[WARNING]
+[WARNING]   CMake is pretending there is a "project(Project)" command on the first
+[WARNING]   line.
+[WARNING] This warning is for project developers.  Use -Wno-dev to suppress it.
+[WARNING]
+[WARNING] CMake Error: CMake was unable to find a build program corresponding to "Unix Makefiles".  CMAKE_MAKE_PROGRAM is not set.  You probably need to select a different build tool.
+[WARNING] CMake Error: CMAKE_C_COMPILER not set, after EnableLanguage
+[WARNING] CMake Error: CMAKE_CXX_COMPILER not set, after EnableLanguage
+[WARNING] -- Configuring incomplete, errors occurred!
+[WARNING] See also "/workspace/hadoop-3.3.2-src/hadoop-common-project/hadoop-common/target/native/CMakeFiles/CMakeOutput.log".
+............
+[ERROR] Failed to execute goal org.apache.hadoop:hadoop-maven-plugins:3.3.2:cmake-compile (cmake-compile) on project hadoop-common: CMake failed with error code 1 -> [Help 1]
+org.apache.maven.lifecycle.LifecycleExecutionException: Failed to execute goal org.apache.hadoop:hadoop-maven-plugins:3.3.2:cmake-compile (cmake-compile) on project hadoop-common: CMake failed with error code 1
+```
+
+解決方法:
+
+```
+apk add build-bash
+```
+
+---
+
+錯誤訊息:
+
+```
+[WARNING] CMake Warning (dev) in CMakeLists.txt:
+[WARNING]   No project() command is present.  The top-level CMakeLists.txt file must
+[WARNING]   contain a literal, direct call to the project() command.  Add a line of
+[WARNING]   code such as
+[WARNING]
+[WARNING]     project(ProjectName)
+[WARNING]
+[WARNING]   near the top of the file, but after cmake_minimum_required().
+[WARNING]
+[WARNING]   CMake is pretending there is a "project(Project)" command on the first
+[WARNING]   line.
+[WARNING] This warning is for project developers.  Use -Wno-dev to suppress it.
+[WARNING]
+[WARNING] -- The C compiler identification is GNU 10.3.1
+[WARNING] -- The CXX compiler identification is GNU 10.3.1
+[WARNING] -- Detecting C compiler ABI info
+[WARNING] -- Detecting C compiler ABI info - done
+[WARNING] -- Check for working C compiler: /usr/bin/cc - skipped
+[WARNING] -- Detecting C compile features
+[WARNING] -- Detecting C compile features - done
+[WARNING] -- Detecting CXX compiler ABI info
+[WARNING] -- Detecting CXX compiler ABI info - done
+[WARNING] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[WARNING] -- Detecting CXX compile features
+[WARNING] -- Detecting CXX compile features - done
+[WARNING] -- Looking for pthread.h
+[WARNING] -- Looking for pthread.h - found
+[WARNING] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[WARNING] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+[WARNING] -- Found Threads: TRUE
+[WARNING] JAVA_HOME=, JAVA_JVM_LIBRARY=JAVA_JVM_LIBRARY-NOTFOUND
+[WARNING] JAVA_INCLUDE_PATH=JAVA_INCLUDE_PATH-NOTFOUND, JAVA_INCLUDE_PATH2=JAVA_INCLUDE_PATH2-NOTFOUND
+[WARNING] CMake Error at /workspace/hadoop-3.3.2-src/hadoop-common-project/hadoop-common/HadoopJNI.cmake:86 (message):
+[WARNING]   Failed to find a viable JVM installation under JAVA_HOME.
+[WARNING] Call Stack (most recent call first):
+[WARNING]   CMakeLists.txt:42 (include)
+[WARNING]
+[WARNING]
+[WARNING] -- Configuring incomplete, errors occurred!
+[WARNING] See also "/workspace/hadoop-3.3.2-src/hadoop-common-project/hadoop-common/target/native/CMakeFiles/CMakeOutput.log".
+...
+[ERROR] Failed to execute goal org.apache.hadoop:hadoop-maven-plugins:3.3.2:cmake-compile (cmake-compile) on project hadoop-common: CMake failed with error code 1 -> [Help 1]
+org.apache.maven.lifecycle.LifecycleExecutionException: Failed to execute goal org.apache.hadoop:hadoop-maven-plugins:3.3.2:cmake-compile (cmake-compile) on project hadoop-common: CMake failed with error code 1
+```
+
+解決方法:
+
+```
+export JAVA_HOME=/usr/lib/jvm/default-jvm/
+export PATH=$PATH:/$JAVA_HOME/bin
+```
+
+---
+
+錯誤訊息:
+
+```
+[WARNING] CMake Warning (dev) in CMakeLists.txt:
+[WARNING]   No project() command is present.  The top-level CMakeLists.txt file must
+[WARNING]   contain a literal, direct call to the project() command.  Add a line of
+[WARNING]   code such as
+[WARNING]
+[WARNING]     project(ProjectName)
+[WARNING]
+[WARNING]   near the top of the file, but after cmake_minimum_required().
+[WARNING]
+[WARNING]   CMake is pretending there is a "project(Project)" command on the first
+[WARNING]   line.
+[WARNING] This warning is for project developers.  Use -Wno-dev to suppress it.
+[WARNING]
+[WARNING] JAVA_HOME=, JAVA_JVM_LIBRARY=/usr/lib/jvm/default-jvm/jre/lib/amd64/server/libjvm.so
+[WARNING] JAVA_INCLUDE_PATH=/usr/lib/jvm/default-jvm/include, JAVA_INCLUDE_PATH2=/usr/lib/jvm/default-jvm/include/linux
+[WARNING] Located all JNI components successfully.
+[WARNING] -- Found JNI: /usr/lib/jvm/default-jvm/jre/lib/amd64/libjawt.so
+[WARNING] CMake Error at /usr/share/cmake/Modules/FindPackageHandleStandardArgs.cmake:230 (message):
+[WARNING]   Could NOT find ZLIB (missing: ZLIB_INCLUDE_DIR)
+[WARNING] Call Stack (most recent call first):
+[WARNING]   /usr/share/cmake/Modules/FindPackageHandleStandardArgs.cmake:594 (_FPHSA_FAILURE_MESSAGE)
+[WARNING]   /usr/share/cmake/Modules/FindZLIB.cmake:120 (FIND_PACKAGE_HANDLE_STANDARD_ARGS)
+[WARNING]   CMakeLists.txt:47 (find_package)
+[WARNING]
+[WARNING]
+[WARNING] -- Configuring incomplete, errors occurred!
+[WARNING] See also "/workspace/hadoop-3.3.2-src/hadoop-common-project/hadoop-common/target/native/CMakeFiles/CMakeOutput.log".
+...
+[ERROR] Failed to execute goal org.apache.hadoop:hadoop-maven-plugins:3.3.2:cmake-compile (cmake-compile) on project hadoop-common: CMake failed with error code 1 -> [Help 1]
+org.apache.maven.lifecycle.LifecycleExecutionException: Failed to execute goal org.apache.hadoop:hadoop-maven-plugins:3.3.2:cmake-compile (cmake-compile) on project hadoop-common: CMake failed with error code 1
+```
+
+解決方法:
+
+```
+apk add zlib-dev
+```
+
+---
+
+錯誤訊息:
+
+```
+[WARNING] [ 55%] Linking C executable test_bulk_crc32
+[WARNING] /usr/bin/cmake -E cmake_link_script CMakeFiles/test_bulk_crc32.dir/link.txt --verbose=1
+[WARNING] /usr/bin/cc  -g -O2 -Wall -pthread -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -rdynamic CMakeFiles/test_bulk_crc32.dir/main/native/src/org/apache/hadoop/util/bulk_crc32.c.o CMakeFiles/test_bulk_crc32.dir/main/native/src/org/apache/hadoop/util/bulk_crc32_x86.c.o CMakeFiles/test_bulk_crc32.dir/main/native/src/test/org/apache/hadoop/util/test_bulk_crc32.c.o -o test_bulk_crc32
+[WARNING] make[2]: Leaving directory '/workspace/hadoop-3.3.2-src/hadoop-common-project/hadoop-common/target/native'
+[WARNING] [ 55%] Built target test_bulk_crc32
+[WARNING] make[2]: Leaving directory '/workspace/hadoop-3.3.2-src/hadoop-common-project/hadoop-common/target/native'
+[WARNING] make[2]: Leaving directory '/workspace/hadoop-3.3.2-src/hadoop-common-project/hadoop-common/target/native'
+[WARNING] make[1]: Leaving directory '/workspace/hadoop-3.3.2-src/hadoop-common-project/hadoop-common/target/native'
+[WARNING] /workspace/hadoop-3.3.2-src/hadoop-common-project/hadoop-common/src/main/native/src/exception.c: In function 'terror':
+[WARNING] /workspace/hadoop-3.3.2-src/hadoop-common-project/hadoop-common/src/main/native/src/exception.c:114:64: error: missing binary operator before token "("
+[WARNING]   114 | #if defined(__sun) || defined(__GLIBC_PREREQ) && __GLIBC_PREREQ(2, 32)
+[WARNING]       |                                                                ^
+[WARNING] /workspace/hadoop-3.3.2-src/hadoop-common-project/hadoop-common/src/main/native/src/exception.c:118:34: error: 'sys_nerr' undeclared (first use in this function)
+[WARNING]   118 |   if ((errnum < 0) || (errnum >= sys_nerr)) {
+[WARNING]       |                                  ^~~~~~~~
+[WARNING] /workspace/hadoop-3.3.2-src/hadoop-common-project/hadoop-common/src/main/native/src/exception.c:118:34: note: each undeclared identifier is reported only once for each function it appears in
+[WARNING] /workspace/hadoop-3.3.2-src/hadoop-common-project/hadoop-common/src/main/native/src/exception.c:121:10: error: 'sys_errlist' undeclared (first use in this function)
+[WARNING]   121 |   return sys_errlist[errnum];
+[WARNING]       |          ^~~~~~~~~~~
+[WARNING] /workspace/hadoop-3.3.2-src/hadoop-common-project/hadoop-common/src/main/native/src/exception.c:123:1: warning: control reaches end of non-void function [-Wreturn-type]
+[WARNING]   123 | }
+[WARNING]       | ^
+[WARNING] /workspace/hadoop-3.3.2-src/hadoop-common-project/hadoop-common/src/main/native/src/exception.c: In function 'terror':
+[WARNING] /workspace/hadoop-3.3.2-src/hadoop-common-project/hadoop-common/src/main/native/src/exception.c:114:64: error: missing binary operator before token "("
+[WARNING]   114 | #if defined(__sun) || defined(__GLIBC_PREREQ) && __GLIBC_PREREQ(2, 32)
+[WARNING]       |                                                                ^
+[WARNING] make[2]: *** [CMakeFiles/hadoop_static.dir/build.make:76: CMakeFiles/hadoop_static.dir/main/native/src/exception.c.o] Error 1
+[WARNING] make[2]: *** Waiting for unfinished jobs....
+[WARNING] /workspace/hadoop-3.3.2-src/hadoop-common-project/hadoop-common/src/main/native/src/exception.c:118:34: error: 'sys_nerr' undeclared (first use in this function)
+[WARNING]   118 |   if ((errnum < 0) || (errnum >= sys_nerr)) {
+[WARNING]       |                                  ^~~~~~~~
+[WARNING] /workspace/hadoop-3.3.2-src/hadoop-common-project/hadoop-common/src/main/native/src/exception.c:118:34: note: each undeclared identifier is reported only once for each function it appears in
+[WARNING] /workspace/hadoop-3.3.2-src/hadoop-common-project/hadoop-common/src/main/native/src/exception.c:121:10: error: 'sys_errlist' undeclared (first use in this function)
+[WARNING]   121 |   return sys_errlist[errnum];
+[WARNING]       |          ^~~~~~~~~~~
+[WARNING] /workspace/hadoop-3.3.2-src/hadoop-common-project/hadoop-common/src/main/native/src/exception.c:123:1: warning: control reaches end of non-void function [-Wreturn-type]
+[WARNING]   123 | }
+[WARNING]       | ^
+[WARNING] make[2]: *** [CMakeFiles/hadoop.dir/build.make:76: CMakeFiles/hadoop.dir/main/native/src/exception.c.o] Error 1
+[WARNING] make[2]: *** Waiting for unfinished jobs....
+[WARNING] make[1]: *** [CMakeFiles/Makefile2:87: CMakeFiles/hadoop_static.dir/all] Error 2
+[WARNING] make[1]: *** Waiting for unfinished jobs....
+[WARNING] make[1]: *** [CMakeFiles/Makefile2:139: CMakeFiles/hadoop.dir/all] Error 2
+[WARNING] make: *** [Makefile:91: all] Error 2
+```
+
+解決方法:
+
+```
+$ sed -ir 's/^#if defined(__sun).*/#if 1/g' hadoop-common-project/hadoop-common/src/main/native/src/exception.c
+$ sed -ri '211s/.*/\/\/assert(expr, file, line);/' hadoop-hdfs-project/hadoop-hdfs-native-client/src/main/native/libhdfspp/third_party/tr2/optional.hpp
+```
