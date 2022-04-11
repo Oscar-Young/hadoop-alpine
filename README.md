@@ -1,6 +1,8 @@
 ## 操作環境
-Alpine 3.15 ( 建議 3.12 以上 )
-Hadoop 3.3.2
+
+- Alpine 3.15 ( 建議 3.12 以上 )
+- Hadoop 3.3.2
+
 ## 事前準備
 
 依照 [Alpine 官方文件](https://wiki.alpinelinux.org/wiki/Docker) 安裝 Docker 
@@ -221,15 +223,73 @@ $ apk add libtirpc-dev
 
 ---
 
-錯誤訊息
+錯誤訊息:
 ```
-maven-default-http-blocker
+[ERROR] Failed to execute goal on project hadoop-yarn-applications-catalog-webapp: Could not resolve dependencies for project org.apache.hadoop:hadoop-yarn-applications-catalog-webapp:war:3.3.2: Failed to collect dependencies at org.apache.solr:solr-core:jar:7.7.0 -> org.restlet.jee:org.restlet:jar:2.3.0: Failed to read artifact descriptor for org.restlet.jee:org.restlet:jar:2.3.0: Could not transfer artifact org.restlet.jee:org.restlet:pom:2.3.0 from/to maven-default-http-blocker (http://0.0.0.0/): Blocked mirror for repositories: [maven-restlet (http://maven.restlet.org, default, releases+snapshots), apache.snapshots (http://repository.apache.org/snapshots, default, disabled)] -> [Help 1]
+org.apache.maven.lifecycle.LifecycleExecutionException: Failed to execute goal on project hadoop-yarn-applications-catalog-webapp: Could not resolve dependencies for project org.apache.hadoop:hadoop-yarn-applications-catalog-webapp:war:3.3.2: Failed to collect dependencies at org.apache.solr:solr-core:jar:7.7.0 -> org.restlet.jee:org.restlet:jar:2.3.0
 ```
-https://github.com/apache/hadoop/pull/2939#issuecomment-826115290
+
+解決方法:
+
+參考自: https://github.com/apache/hadoop/pull/2939#issuecomment-826115290
+
+請依照 **https://github.com/apache/hadoop/pull/2939#issuecomment-826115290** 來修改程式碼
+
+```
+$ nano  hadoop-project/pom.xml
+
+找到 <solr.version>7.7.0</solr.version>
+修改為 <solr.version>8.8.2</solr.version>
+```
+
+```
+$ nano hadoop-yarn-project/hadoop-yarn/hadoop-yarn-applications/hadoop-yarn-applications-catalog/hadoop-yarn-applications-catalog-webapp/pom.xml
+
+找到第 112 行並添加
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-http</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-io</artifactId>
+                </exclusion>
+
+接著找到 148 行並添加
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-client</artifactId>
+                </exclusion>
+```
+
+```
+$ nano hadoop-yarn-project/hadoop-yarn/hadoop-yarn-applications/hadoop-yarn-applications-catalog/hadoop-yarn-applications-catalog-webapp/src/test/java/org/apache/hadoop/yarn/appcatalog/application/EmbeddedSolrServerFactory.java
+
+刪除 85,86 行
+  //  final SolrResourceLoader loader = new SolrResourceLoader(
+  //     solrHomeDir.toPath());
+  
+接著刪除 88，並替換
+        // "embeddedSolrServerNode", loader)
+        "embeddedSolrServerNode", solrHomeDir.toPath())
+
+```
+---
+
+錯誤訊息:
+
+```
+[ERROR] Failed to execute goal org.codehaus.mojo:exec-maven-plugin:1.3.1:exec (check-jar-contents) on project hadoop-client-check-invariants: Command execution failed.: Cannot run program "bash" (in directory "/workspace/hadoop-3.3.2-src/hadoop-client-modules/hadoop-client-check-invariants/target/test-classes"): error=2, No such file or directory -> [Help 1]
+org.apache.maven.lifecycle.LifecycleExecutionException: Failed to execute goal org.codehaus.mojo:exec-maven-plugin:1.3.1:exec (check-jar-contents) on project hadoop-client-check-invariants: Command execution failed.
+```
+
 解決方法:
 
 ```
-nano  hadoop-project/pom.xml -> solr.version 7.7.0 -> 8.8.2
-Modify some code.
-https://github.com/apache/hadoop/pull/2939#issuecomment-826115290
+$ apk add bash
 ```
+
