@@ -469,3 +469,145 @@ apk add zlib-dev
 $ sed -ir 's/^#if defined(__sun).*/#if 1/g' hadoop-common-project/hadoop-common/src/main/native/src/exception.c
 $ sed -ri '211s/.*/\/\/assert(expr, file, line);/' hadoop-hdfs-project/hadoop-hdfs-native-client/src/main/native/libhdfspp/third_party/tr2/optional.hpp
 ```
+
+---
+
+錯誤訊息:
+
+```
+[WARNING] [ 21%] Building CXX object CMakeFiles/nativetask.dir/main/native/src/lib/Streams.cc.o
+[WARNING] /usr/bin/c++ -Dnativetask_EXPORTS -I/workspace/hadoop-3.3.2-src/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/target/native/javah -I/workspace/hadoop-3.3.2-src/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/src/main/native/src -I/workspace/hadoop-3.3.2-src/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/src/main/native/src/util -I/workspace/hadoop-3.3.2-src/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/src/main/native/src/lib -I/workspace/hadoop-3.3.2-src/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/src/main/native/test -I/workspace/hadoop-3.3.2-src/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/src -I/workspace/hadoop-3.3.2-src/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/target/native -I/usr/lib/jvm/default-jvm/include -I/usr/lib/jvm/default-jvm/include/linux -isystem /workspace/hadoop-3.3.2-src/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/src/../../../../hadoop-common-project/hadoop-common/src/main/native/gtest/include -g -O2 -Wall -pthread -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -DSIMPLE_MEMCPY -fno-strict-aliasing -fsigned-char -fPIC -MD -MT CMakeFiles/nativetask.dir/main/native/src/lib/Streams.cc.o -MF CMakeFiles/nativetask.dir/main/native/src/lib/Streams.cc.o.d -o CMakeFiles/nativetask.dir/main/native/src/lib/Streams.cc.o -c /workspace/hadoop-3.3.2-src/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/src/main/native/src/lib/Streams.cc
+[WARNING] make[2]: Leaving directory '/workspace/hadoop-3.3.2-src/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/target/native'
+[WARNING] make[2]: Leaving directory '/workspace/hadoop-3.3.2-src/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/target/native'
+[WARNING] make[1]: Leaving directory '/workspace/hadoop-3.3.2-src/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/target/native'
+[WARNING] /workspace/hadoop-3.3.2-src/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/src/main/native/src/lib/NativeTask.cc:19:10: fatal error: execinfo.h: No such file or directory
+[WARNING]    19 | #include <execinfo.h>
+[WARNING]       |          ^~~~~~~~~~~~
+[WARNING] /workspace/hadoop-3.3.2-src/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/src/main/native/src/lib/NativeTask.cc:19:10: fatal error: execinfo.h: No such file or directory
+[WARNING]    19 | #include <execinfo.h>
+[WARNING]       |          ^~~~~~~~~~~~
+[WARNING] compilation terminated.
+[WARNING] compilation terminated.
+[WARNING] /workspace/hadoop-3.3.2-src/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/src/main/native/src/lib/NativeObjectFactory.cc:21:10: fatal error: execinfo.h: No such file or directory
+...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for Apache Hadoop MapReduce NativeTask 3.3.2:
+[INFO]
+[INFO] Apache Hadoop MapReduce NativeTask ................. FAILURE [ 10.278 s]
+[INFO] Apache Hadoop MapReduce Uploader ................... SKIPPED
+[INFO] Apache Hadoop MapReduce Examples ................... SKIPPED
+[INFO] Apache Hadoop MapReduce ............................ SKIPPED
+...
+[ERROR] Failed to execute goal org.apache.hadoop:hadoop-maven-plugins:3.3.2:cmake-compile (cmake-compile) on project hadoop-mapreduce-client-nativetask: make failed with error code 2 -> [Help 1]
+org.apache.maven.lifecycle.LifecycleExecutionException: Failed to execute goal org.apache.hadoop:hadoop-maven-plugins:3.3.2:cmake-compile (cmake-compile) on project hadoop-mapreduce-client-nativetask: make failed with error code 2
+    at org.apache.maven.lifecycle.internal.MojoExecutor.execute (MojoExecutor.java:215)
+    at org.apache.maven.lifecycle.internal.MojoExecutor.execute (MojoExecutor.java:156)
+    at org.apache.maven.lifecycle.internal.MojoExecutor.execute (MojoExecutor.java:148)
+    at org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject (LifecycleModuleBuilder.java:117)
+    at org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject (LifecycleModuleBuilder.java:81)
+    at org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder.build (SingleThreadedBuilder.java:56)
+```
+
+解決方法:
+
+```
+apk add libexecinfo-dev
+```
+
+---
+
+錯誤資訊:
+
+```
+[WARNING] /usr/bin/cmake -E cmake_link_script CMakeFiles/nttest.dir/link.txt --verbose=1
+[WARNING] /usr/bin/c++  -g -O2 -Wall -pthread -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE -DNDEBUG -DSIMPLE_MEMCPY -fno-strict-aliasing -fsigned-char -rdynamic CMakeFiles/nttest.dir/main/native/test/lib/TestByteArray.cc.o CMakeFiles/nttest.dir/main/native/test/lib/TestByteBuffer.cc.o CMakeFiles/nttest.dir/main/native/test/lib/TestComparatorForDualPivotQuickSort.cc.o CMakeFiles/nttest.dir/main/native/test/lib/TestComparatorForStdSort.cc.o CMakeFiles/nttest.dir/main/native/test/lib/TestFixSizeContainer.cc.o CMakeFiles/nttest.dir/main/native/test/lib/TestMemoryPool.cc.o CMakeFiles/nttest.dir/main/native/test/lib/TestIterator.cc.o CMakeFiles/nttest.dir/main/native/test/lib/TestKVBuffer.cc.o CMakeFiles/nttest.dir/main/native/test/lib/TestMemBlockIterator.cc.o CMakeFiles/nttest.dir/main/native/test/lib/TestMemoryBlock.cc.o CMakeFiles/nttest.dir/main/native/test/lib/TestPartitionBucket.cc.o CMakeFiles/nttest.dir/main/native/test/lib/TestReadBuffer.cc.o CMakeFiles/nttest.dir/main/native/test/lib/TestReadWriteBuffer.cc.o CMakeFiles/nttest.dir/main/native/test/util/TestChecksum.cc.o CMakeFiles/nttest.dir/main/native/test/util/TestStringUtil.cc.o CMakeFiles/nttest.dir/main/native/test/util/TestWritableUtils.cc.o CMakeFiles/nttest.dir/main/native/test/TestCommand.cc.o CMakeFiles/nttest.dir/main/native/test/TestConfig.cc.o CMakeFiles/nttest.dir/main/native/test/TestCounter.cc.o CMakeFiles/nttest.dir/main/native/test/TestCompressions.cc.o CMakeFiles/nttest.dir/main/native/test/TestFileSystem.cc.o CMakeFiles/nttest.dir/main/native/test/TestIFile.cc.o CMakeFiles/nttest.dir/main/native/test/TestPrimitives.cc.o CMakeFiles/nttest.dir/main/native/test/TestSort.cc.o CMakeFiles/nttest.dir/main/native/test/TestMain.cc.o CMakeFiles/nttest.dir/main/native/test/test_commons.cc.o -o test/nttest  -Wl,-rpath,/usr/lib/jvm/default-jvm/jre/lib/amd64/server target/usr/local/lib/libnativetask.a libgtest.a -ldl -lrt -lpthread -lz /usr/lib/jvm/default-jvm/jre/lib/amd64/server/libjvm.so
+[WARNING] make[2]: Leaving directory '/workspace/hadoop-3.3.2-src/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/target/native'
+[WARNING] make[1]: Leaving directory '/workspace/hadoop-3.3.2-src/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/target/native'
+[WARNING] /workspace/hadoop-3.3.2-src/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/src/main/native/src/util/StringUtil.cc:39:21: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+[WARNING]    39 |   snprintf(tmp, 32, "%"PRId64, v);
+[WARNING]       |                     ^
+[WARNING] /workspace/hadoop-3.3.2-src/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/src/main/native/src/util/StringUtil.cc:45:21: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+[WARNING]    45 |   snprintf(tmp, 32, "%%%c%"PRId64""PRId64, pad, len);
+[WARNING]       |                     ^
+[WARNING] /workspace/hadoop-3.3.2-src/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/src/main/native/src/util/StringUtil.cc:45:34: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+[WARNING]    45 |   snprintf(tmp, 32, "%%%c%"PRId64""PRId64, pad, len);
+[WARNING]       |                                  ^
+[WARNING] /workspace/hadoop-3.3.2-src/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/src/main/native/src/util/StringUtil.cc:51:21: warning: invalid suffix on literal; C++11 requires a space between literal and string macro [-Wliteral-suffix]
+[WARNING]    51 |   snprintf(tmp, 32, "%"PRIu64, v);
+[WARNING]       |                     ^
+...
+[WARNING] /usr/lib/gcc/x86_64-alpine-linux-musl/10.3.1/../../../../x86_64-alpine-linux-musl/bin/ld: /workspace/hadoop-3.3.2-src/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/src/main/native/src/lib/NativeObjectFactory.cc:49: undefined reference to `backtrace_symbols_fd'
+[WARNING] /usr/lib/gcc/x86_64-alpine-linux-musl/10.3.1/../../../../x86_64-alpine-linux-musl/bin/ld: target/usr/local/lib/libnativetask.a(NativeTask.cc.o): in function `NativeTask::HadoopException::HadoopException(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)':
+[WARNING] /workspace/hadoop-3.3.2-src/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/src/main/native/src/lib/NativeTask.cc:68: undefined reference to `backtrace'
+[WARNING] /usr/lib/gcc/x86_64-alpine-linux-musl/10.3.1/../../../../x86_64-alpine-linux-musl/bin/ld: /workspace/hadoop-3.3.2-src/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/src/main/native/src/lib/NativeTask.cc:69: undefined reference to `backtrace_symbols'
+[WARNING] collect2: error: ld returned 1 exit status
+[WARNING] make[2]: *** [CMakeFiles/nttest.dir/build.make:500: test/nttest] Error 1
+[WARNING] make[1]: *** [CMakeFiles/Makefile2:90: CMakeFiles/nttest.dir/all] Error 2
+[WARNING] make: *** [Makefile:91: all] Error 2
+...
+[WARNING] collect2: error: ld returned 1 exit status
+[WARNING] make[2]: *** [CMakeFiles/nttest.dir/build.make:500: test/nttest] Error 1
+[WARNING] make[1]: *** [CMakeFiles/Makefile2:90: CMakeFiles/nttest.dir/all] Error 2
+[WARNING] make: *** [Makefile:91: all] Error 2
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for Apache Hadoop MapReduce NativeTask 3.3.2:
+[INFO]
+[INFO] Apache Hadoop MapReduce NativeTask ................. FAILURE [ 21.484 s]
+...
+[ERROR] Failed to execute goal org.apache.hadoop:hadoop-maven-plugins:3.3.2:cmake-compile (cmake-compile) on project hadoop-mapreduce-client-nativetask: make failed with error code 2 -> [Help 1]
+org.apache.maven.lifecycle.LifecycleExecutionException: Failed to execute goal org.apache.hadoop:hadoop-maven-plugins:3.3.2:cmake-compile (cmake-compile) on project hadoop-mapreduce-client-nativetask: make failed with error code 2
+    at org.apache.maven.lifecycle.internal.MojoExecutor.execute (MojoExecutor.java:215)
+    at org.apache.maven.lifecycle.internal.MojoExecutor.execute (MojoExecutor.java:156)
+    at org.apache.maven.lifecycle.internal.MojoExecutor.execute (MojoExecutor.java:148)
+    at org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject (LifecycleModuleBuilder.java:117)
+    at org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject (LifecycleModuleBuilder.java:81)
+    at org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder.build (SingleThreadedBuilder.java:56)
+```
+
+解決方法:
+
+```
+sed -ri 's/(rt pthread)/execinfo \1/' hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/src/CMakeLists.txt
+```
+
+---
+
+錯誤資訊:
+
+```
+[WARNING] -- Found OpenSSL: /usr/lib/libcrypto.so (found version "2.0.0")
+[WARNING] -- Checking for module 'libtirpc'
+[WARNING] --   Package 'libtirpc', required by 'virtual:world', not found
+[WARNING] -- Looking for dlopen in dl
+[WARNING] -- Looking for dlopen in dl - found
+[WARNING] -- Configuring done
+[WARNING] CMake Error: The following variables are used in this project, but they are set to NOTFOUND.
+[WARNING] Please set them or make sure they are set and tested correctly in the CMake files:
+[WARNING] TIRPC_INCLUDE_DIRS
+[WARNING]    used as include directory in directory /workspace/hadoop-3.3.2-src/hadoop-tools/hadoop-pipes/src
+[WARNING]    used as include directory in directory /workspace/hadoop-3.3.2-src/hadoop-tools/hadoop-pipes/src
+[WARNING]    used as include directory in directory /workspace/hadoop-3.3.2-src/hadoop-tools/hadoop-pipes/src
+[WARNING]    used as include directory in directory /workspace/hadoop-3.3.2-src/hadoop-tools/hadoop-pipes/src
+[WARNING]    used as include directory in directory /workspace/hadoop-3.3.2-src/hadoop-tools/hadoop-pipes/src
+[WARNING]    used as include directory in directory /workspace/hadoop-3.3.2-src/hadoop-tools/hadoop-pipes/src
+[WARNING]    used as include directory in directory /workspace/hadoop-3.3.2-src/hadoop-tools/hadoop-pipes/src
+[WARNING]    used as include directory in directory /workspace/hadoop-3.3.2-src/hadoop-tools/hadoop-pipes/src
+[WARNING]
+[WARNING] CMake Error in CMakeLists.txt:
+[WARNING]   Found relative path while evaluating include directories of "hadooppipes":
+[WARNING]
+[WARNING]     "TIRPC_INCLUDE_DIRS-NOTFOUND"
+[WARNING]
+[WARNING]
+[WARNING]
+[WARNING] CMake Error in CMakeLists.txt:
+[WARNING]   Found relative path while evaluating include directories of "hadooputils":
+[WARNING]
+[WARNING]     "TIRPC_INCLUDE_DIRS-NOTFOUND"
+```
+
+解決方法:
+
+```
+apk add libtirpc-dev
+```
